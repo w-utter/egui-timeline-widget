@@ -1,6 +1,6 @@
 use egui::{Rect, Vec2, Color32, Sense, Widget, Ui,
     FontId, Response, Pos2, LayerId, Order, Align2,
-    Rounding, vec2
+    CornerRadius, vec2, StrokeKind,
 };
 
 pub struct Timeline<'a> {
@@ -50,7 +50,7 @@ impl<'a> Timeline<'a> {
 impl<'a> Widget for Timeline<'a> {
     fn ui(self, ui: &mut Ui) -> Response {
         let font_id = FontId::new(self.font_size, egui::FontFamily::Proportional);
-        let time_font_width = ui.ctx().fonts(|fonts| {
+        let time_font_width = ui.ctx().fonts_mut(|fonts| {
             fonts.layout_no_wrap(time_to_display(0.0), font_id, egui::Color32::WHITE).rect.width()
         });
 
@@ -69,7 +69,7 @@ impl<'a> Widget for Timeline<'a> {
         if ui.is_rect_visible(rect) {
             let radius = self.radius_factor * rect.height();
             ui.painter()
-                .rect(outer_rect, radius, visuals.bg_fill, visuals.bg_stroke);
+                .rect(outer_rect, radius, visuals.bg_fill, visuals.bg_stroke, StrokeKind::Outside);
 
             if response.hovered() {
                 if let Some(mouse_position) = ui.input(|i| i.pointer.hover_pos()) {
@@ -178,12 +178,12 @@ fn draw_tooltip(
     let foreground_painter = ui.ctx().layer_painter(layer_id);
 
     let font_id = FontId::new(font_size, egui::FontFamily::Proportional);
-    let tooltip_font_width = ui.ctx().fonts(|fonts| {
+    let tooltip_font_width = ui.ctx().fonts_mut(|fonts| {
         fonts.layout_no_wrap(tooltip_text.to_string(), font_id, egui::Color32::WHITE).rect.width()
     });
 
     let rect = Rect::from_min_size(pos, vec2(tooltip_font_width + 8.0, font_size + 6.0));
-    let rounding = Rounding::same(5.0);
+    let rounding = CornerRadius::same(5);
 
     foreground_painter.rect_filled(rect, rounding, tooltip_color);
 

@@ -12,7 +12,7 @@ fn main() -> Result<(), eframe::Error> {
         "Timeline hello world",
         options,
         Box::new(|_cc| {
-            Box::<MyApp>::default()
+            Ok(Box::<MyApp>::default())
         }),
     )
 }
@@ -30,8 +30,8 @@ impl Default for MyApp {
 }
 
 impl eframe::App for MyApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::CentralPanel::default().show(ctx, |ui| {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ui, |ui| {
             ui.label("Timeline example");
 
             let timeline = Timeline::new(10.0, 100.0, &mut self.seek_position);
